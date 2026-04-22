@@ -42,7 +42,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import androidx.compose.ui.res.stringResource
-import com.lts.control.R
 import kotlin.math.max
 import kotlin.math.min
 
