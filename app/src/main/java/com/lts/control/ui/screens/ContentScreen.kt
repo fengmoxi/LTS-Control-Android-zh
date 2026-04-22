@@ -41,6 +41,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+import androidx.compose.ui.res.stringResource
+import com.lts.control.R
+import kotlin.math.max
+import kotlin.math.min
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -231,13 +235,13 @@ fun ContentScreen(
                             transitionSpec = { fadeIn(tween(180)) with fadeOut(tween(180)) }
                         ) { (state, rem) ->
                             val text = when (state) {
-                                DeviceState.IDLE      -> "Leerlauf"
-                                DeviceState.RUNNING   -> "Läuft..."
-                                DeviceState.PAUSED    -> "Pausiert"
-                                DeviceState.AUTO_STOP -> "Auto-Stopp"
-                                DeviceState.UPDATING  -> "Wird aktualisiert..."
-                                DeviceState.DONE      -> "Fertig"
-                                DeviceState.ERROR     -> "Fehler"
+                                DeviceState.IDLE      -> stringResource(R.string.state_idle)
+                                DeviceState.RUNNING   -> stringResource(R.string.state_running)
+                                DeviceState.PAUSED    -> stringResource(R.string.state_paused)
+                                DeviceState.AUTO_STOP -> stringResource(R.string.state_auto_stop)
+                                DeviceState.UPDATING  -> stringResource(R.string.state_updating)
+                                DeviceState.DONE      -> stringResource(R.string.state_done)
+                                DeviceState.ERROR     -> stringResource(R.string.state_error)
                             }
                             Text(
                                 text = text,
@@ -305,8 +309,8 @@ private fun PillRow(
                         modifier = Modifier.size(22.dp)
                     )
                 },
-                title = "Verbindung",
-                subtitle = if (isConnected) "Verbunden" else "Getrennt",
+                title = stringResource(R.string.connection),
+                subtitle = if (isConnected) stringResource(R.string.connected) else stringResource(R.string.disconnected),
                 modifier = Modifier.weight(1f)
             )
             // Temperatur (rechts oben)
@@ -319,7 +323,7 @@ private fun PillRow(
                         modifier = Modifier.size(22.dp)
                     )
                 },
-                title = "Temperatur",
+                title = stringResource(R.string.temperature),
                 subtitle = tempLabel,
                 modifier = Modifier.weight(1f)
             )
@@ -336,8 +340,8 @@ private fun PillRow(
                         modifier = Modifier.size(23.5.dp)
                     )
                 },
-                title = "Filament",
-                subtitle = if (hasFilament) "Erkannt" else "Nicht erkannt",
+                title = stringResource(R.string.filament),
+                subtitle = if (hasFilament) stringResource(R.string.detected) else stringResource(R.string.not_detected),
                 modifier = Modifier.weight(1f)
             )
             // Lüfter (rechts unten)
@@ -345,7 +349,7 @@ private fun PillRow(
                 leading = {
                     Icon(Symbols.Fan, contentDescription = null, tint = LocalContentColor.current, modifier = Modifier.size(22.dp))
                 },
-                title = "Lüfter",
+                title = stringResource(R.string.fan),
                 subtitle = "—",
                 modifier = Modifier.weight(1f)
             )
@@ -449,12 +453,12 @@ private fun ControlCard(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 PillButton(
-                    text = if (isRunning) "Pause" else "Start",
+                    text = if (isRunning) stringResource(R.string.pause) else stringResource(R.string.start),
                     onClick = onStartOrPause,
                     modifier = Modifier.weight(1f)
                 )
                 PillButton(
-                    text = "Stopp",
+                    text = stringResource(R.string.stop),
                     onClick = onStop,
                     modifier = Modifier.weight(1f),
                     danger = true

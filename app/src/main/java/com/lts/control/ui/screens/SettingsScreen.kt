@@ -52,6 +52,8 @@ import com.lts.control.core.ble.BleViewModel
 import com.lts.control.core.ble.model.DeviceState
 import kotlin.math.max
 import kotlin.math.min
+import androidx.compose.ui.res.stringResource
+import com.lts.control.R
 
 /* -------------------------------------------------------------------------- */
 /*                                 Entry Point                                */
@@ -129,8 +131,8 @@ fun SettingsScreen(
                 Icon(icon, contentDescription = null, tint = tint)
                 Spacer(Modifier.width(8.dp))
                 Column(Modifier.weight(1f)) {
-                    Text("Status", style = MaterialTheme.typography.titleSmall)
-                    val subtitle = deviceStateLabel(deviceState)
+                    Text(stringResource(R.string.status), style = MaterialTheme.typography.titleSmall)
+                    val subtitle = stringResource(deviceStateLabel(deviceState))
                     AnimatedContent(
                         targetState = subtitle,
                         transitionSpec = {
@@ -146,28 +148,31 @@ fun SettingsScreen(
         }
 
         /* -------------------------------- Konfiguration ------------------------------- */
-        SectionHeader("Konfiguration")
+        SectionHeader(stringResource(R.string.configuration))
         SettingsCard {
             // Jingle
             RowSetting(
-                title = "Ton bei Fertigstellung",
+                title = stringResource(R.string.sound_on_completion),
                 trailing = {
                     var expanded by remember { mutableStateOf(false) }
-                    val current = when (status?.jingleStyle ?: 0) {
-                        1 -> "Einfach"; 2 -> "Glissando"; 3 -> "Star Wars"; else -> "Aus"
-                    }
+                    val jingleLabels = mapOf(
+                        0 to stringResource(R.string.jingle_off),
+                        1 to stringResource(R.string.jingle_simple),
+                        2 to stringResource(R.string.jingle_glissando),
+                        3 to stringResource(R.string.jingle_star_wars)
+                    )
+                    val current = jingleLabels[status?.jingleStyle ?: 0] ?: jingleLabels[0]!!
                     Box {
                         Text(current, color = Color.Gray, modifier = Modifier
                             .clip(RoundedCornerShape(8))
                             .clickable { expanded = true }
                             .padding(horizontal = 8.dp, vertical = 4.dp))
                         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                            listOf(0 to "Aus", 1 to "Einfach", 2 to "Glissando", 3 to "Star Wars").forEach { (tag, label) ->
+                            jingleLabels.forEach { (tag, label) ->
                                 DropdownMenuItem(
                                     text = { Text(label) },
                                     onClick = {
-                                        val newVal = tag
-                                        vm.setJingle(newVal)
+                                        vm.setJingle(tag)
                                         expanded = false
                                     }
                                 )
@@ -181,7 +186,7 @@ fun SettingsScreen(
             var ledLocal by remember { mutableStateOf((status?.ledBrightness ?: 50).toFloat()) }
             LaunchedEffect(status?.ledBrightness) { ledLocal = (status?.ledBrightness ?: 50).toFloat() }
             SliderRow(
-                title = "LED Helligkeit",
+                title = stringResource(R.string.led_brightness),
                 valueText = "${ledLocal.toInt()} %",
                 value = ledLocal,
                 valueRange = 0f..100f,
@@ -192,26 +197,26 @@ fun SettingsScreen(
 
             // Respool-Menge (zeigt aktuelle Auswahl)
             RowSetting(
-                title = "Respool-Menge",
-                subtitle = targetWeightLabel(status?.targetWeight ?: 0),
+                title = stringResource(R.string.respool_amount),
+                subtitle = stringResource(targetWeightLabel(status?.targetWeight ?: 0)),
                 clickable = true,
                 onClick = onOpenRespoolAmount
             )
 
             // Filament Sensor
             ToggleRow(
-                title = "Filament Sensor nutzen",
+                title = stringResource(R.string.use_filament_sensor),
                 checked = status?.useFilamentSensor ?: true,
                 onChecked = { vm.setFilamentSensor(it) }
             )
         }
-        SectionFooter("Wenn der Sensor deaktiviert ist, wird nicht auf den Verlust von Filament reagiert.")
+        SectionFooter(stringResource(R.string.filament_sensor_help))
 
         /* ----------------------------------- Motor ----------------------------------- */
-        SectionHeader("Motor")
+        SectionHeader(stringResource(R.string.motor))
         SettingsCard {
             ToggleRow(
-                title = "Richtung umkehren",
+                title = stringResource(R.string.reverse_direction),
                 checked = (status?.motorDirection ?: 0) == 1,
                 onChecked = { on -> vm.setDirection(if (on) 1 else 0) }
             )
@@ -220,7 +225,7 @@ fun SettingsScreen(
             var powLocal by remember { mutableStateOf((status?.motorStrength ?: 100).toFloat()) }
             LaunchedEffect(status?.motorStrength) { powLocal = (status?.motorStrength ?: 100).toFloat() }
             StepperRow(
-                title = "Stärke",
+                title = stringResource(R.string.strength),
                 valueText = "${powLocal.toInt()} %",
                 value = powLocal,
                 range = 80f..120f,
@@ -234,9 +239,14 @@ fun SettingsScreen(
             LaunchedEffect(status?.torqueLimit) { tlLocal = (status?.torqueLimit ?: 0).toFloat() }
             val hs = highSpeed
             PickerRow(
-                title = "Auto-Stopp Empfindlichkeit",
+                title = stringResource(R.string.auto_stop_sensitivity),
                 enabled = !hs,
-                currentLabel = when (tlLocal.toInt()) { 1 -> "Gering"; 2 -> "Mittel"; 3 -> "Hoch"; else -> "Aus" },
+                currentLabel = when (tlLocal.toInt()) {
+                    1 -> stringResource(R.string.sensitivity_low)
+                    2 -> stringResource(R.string.sensitivity_medium)
+                    3 -> stringResource(R.string.sensitivity_high)
+                    else -> stringResource(R.string.sensitivity_off)
+                },
                 onNext = {
                     val next = (tlLocal.toInt() + 1).coerceAtMost(3)
                     tlLocal = next.toFloat()
@@ -249,25 +259,25 @@ fun SettingsScreen(
                 }
             )
         }
-        SectionFooter("Der Auto-Stopp stoppt den Motor bei Widerstand.")
+        SectionFooter(stringResource(R.string.auto_stop_help))
 
         /* -------------------------------- High-Speed --------------------------------- */
         SettingsCard {
             ToggleRow(
-                title = "High-Speed",
+                title = stringResource(R.string.high_speed),
                 checked = highSpeed,
                 onChecked = { vm.setHighSpeed(it) }
             )
         }
-        SectionFooter("Der High-Speed Modus erhöht die Geschwindigkeit des Motors. Auto-Stopp ist dabei nicht verfügbar.")
+        SectionFooter(stringResource(R.string.high_speed_help))
 
         /* ----------------------------------- Lüfter ---------------------------------- */
-        SectionHeader("Lüfter")
+        SectionHeader(stringResource(R.string.fan))
         SettingsCard {
             var fanLocal by remember { mutableStateOf((status?.fanSpeed ?: 60).toFloat()) }
             LaunchedEffect(status?.fanSpeed) { fanLocal = (status?.fanSpeed ?: 60).toFloat() }
             StepperRow(
-                title = "Geschwindigkeit",
+                title = stringResource(R.string.speed),
                 valueText = "${fanLocal.toInt()} %",
                 value = fanLocal,
                 range = 10f..100f,
@@ -276,29 +286,29 @@ fun SettingsScreen(
                 onFinish = { vm.setFanSpeed(fanLocal.toInt()) }
             )
             ToggleRow(
-                title = "Lüfter immer an",
+                title = stringResource(R.string.fan_always_on),
                 checked = status?.fanAlwaysOn ?: (status?.fanAlwaysOn == true),
                 onChecked = { vm.setFanAlways(it) }
             )
             // Temperatur-Einheit (Segment)
             SegmentedRow(
-                title = "Temperatur-Einheit",
-                options = listOf("Celsius", "Fahrenheit"),
+                title = stringResource(R.string.temperature_unit),
+                options = listOf(stringResource(R.string.celsius), stringResource(R.string.fahrenheit)),
                 selectedIndex = if (showFahrenheit) 1 else 0
             ) { idx: Int ->
                 showFahrenheit = (idx == 1)
                 prefs.temperatureInFahrenheit = showFahrenheit
             }
         }
-        SectionFooter("Der Lüfter schaltet sich standardmäßig 10 Sekunden nach stoppen des Respoolers aus.")
+        SectionFooter(stringResource(R.string.fan_help))
 
         /* -------------------------------- Kalibrierung ------------------------------- */
-        SectionHeader("Kalibrierung")
+        SectionHeader(stringResource(R.string.calibration))
         SettingsCard {
             var durLocal by remember { mutableStateOf((status?.durationAt80 ?: 895).toFloat()) }
             LaunchedEffect(status?.durationAt80) { durLocal = (status?.durationAt80 ?: 895).toFloat() }
             StepperRow(
-                title = "Dauer",
+                title = stringResource(R.string.duration),
                 valueText = formatMinutesSeconds(durLocal.toInt()),
                 value = durLocal,
                 range = 5f..2000f,
@@ -307,13 +317,13 @@ fun SettingsScreen(
                 onFinish = { vm.setDurationAt80(durLocal.toInt()) }
             )
         }
-        SectionFooter("Für genauere Zeitangaben bzw. Respool-Mengen die benötigte Dauer für eine 1 kg Spule bei 80 % Geschwindigkeit messen und hier anpassen.")
+        SectionFooter(stringResource(R.string.calibration_help))
 
         /* ------------------------------------- App ----------------------------------- */
-        SectionHeader("App")
+        SectionHeader(stringResource(R.string.app_section))
         SettingsCard {
             ToggleRow(
-                title = "Benachrichtigungen",
+                title = stringResource(R.string.notifications),
                 checked = notificationsOn,
                 onChecked = { on ->
                     val ctx = context
@@ -326,7 +336,7 @@ fun SettingsScreen(
                 }
             )
         }
-        SectionFooter("Erhalte Push-Benachrichtigungen, wenn der Respooler stoppt oder fertig ist.")
+        SectionFooter(stringResource(R.string.notifications_help))
         Spacer(Modifier.height(18.dp))
     }
 }
@@ -345,10 +355,10 @@ fun RespoolAmountScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Respool-Menge") },
+                title = { Text(stringResource(R.string.respool_amount)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Zurück")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -363,17 +373,17 @@ fun RespoolAmountScreen(
             SectionHeaderSpacer()
             SettingsCard {
                 SingleChoiceRow(
-                    title = "Gesamte Spule",
+                    title = stringResource(R.string.entire_spool),
                     selected = current == 0,
                     onClick = { if (current != 0) vm.setTargetWeight(0) }
                 )
             }
-            SectionFooter("Der Respooler stoppt anhand des Filament Sensors, sobald die obere Spule leer ist. Empfohlen, wenn Filament zwischen zwei 1 kg Spulen übertragen wird.")
+            SectionFooter(stringResource(R.string.entire_spool_help))
 
             // Fixed weights
             SectionHeaderSpacer()
             SettingsCard {
-                listOf(1 to "1,0 kg", 2 to "0,5 kg", 3 to "0,25 kg").forEach { (tag, label) ->
+                listOf(1 to stringResource(R.string.weight_1kg), 2 to stringResource(R.string.weight_05kg), 3 to stringResource(R.string.weight_025kg)).forEach { (tag, label) ->
                     SingleChoiceRow(
                         title = label,
                         selected = current == tag,
@@ -382,8 +392,7 @@ fun RespoolAmountScreen(
                 }
             }
             SectionFooter(
-                "Der Respooler stoppt anhand der übertragenen Menge. Empfohlen, wenn die obere Spule größer als 1 kg ist.\n\n" +
-                        "Das Stoppen funktioniert auf Basis des dynamisch berechneten Fortschritts. Die Genauigkeit kann je nach Material variieren."
+                stringResource(R.string.fixed_weight_help)
             )
         }
     }
@@ -596,28 +605,29 @@ fun RespoolAmountScreen(
 /*                                   Utils                                    */
 /* -------------------------------------------------------------------------- */
 
-private fun deviceStateLabel(state: DeviceState): String = when (state) {
-    DeviceState.IDLE      -> "Bereit"
-    DeviceState.RUNNING   -> "Läuft"
-    DeviceState.PAUSED    -> "Pausiert"
-    DeviceState.AUTO_STOP -> "Auto-Stopp"
-    DeviceState.UPDATING  -> "Wird aktualisiert…"
-    DeviceState.DONE      -> "Fertig"
-    DeviceState.ERROR     -> "Fehler"
+private fun deviceStateLabel(state: DeviceState): Int = when (state) {
+    DeviceState.IDLE      -> R.string.state_ready
+    DeviceState.RUNNING   -> R.string.state_running_short
+    DeviceState.PAUSED    -> R.string.state_paused
+    DeviceState.AUTO_STOP -> R.string.state_auto_stop
+    DeviceState.UPDATING  -> R.string.state_updating
+    DeviceState.DONE      -> R.string.state_done
+    DeviceState.ERROR     -> R.string.state_error
 }
 
-private fun targetWeightLabel(tag: Int): String = when (tag) {
-    1 -> "1,0 kg"
-    2 -> "0,5 kg"
-    3 -> "0,25 kg"
-    else -> "Gesamte Spule"
+private fun targetWeightLabel(tag: Int): Int = when (tag) {
+    1 -> R.string.weight_1kg
+    2 -> R.string.weight_05kg
+    3 -> R.string.weight_025kg
+    else -> R.string.entire_spool
 }
 
+@Composable
 private fun formatMinutesSeconds(seconds: Int): String {
     val s = seconds.coerceAtLeast(0)
     val m = s / 60
     val r = s % 60
-    return "Dauer: ${m}m ${r}s"
+    return stringResource(R.string.duration_format, m, r)
 }
 
 /* ---------------------------- Simple App Prefs ----------------------------- */

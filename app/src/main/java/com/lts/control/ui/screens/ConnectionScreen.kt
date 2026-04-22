@@ -25,6 +25,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.lts.control.R
 import com.lts.control.core.ble.BleManager
 import com.lts.control.core.ble.BleViewModel
 import com.lts.control.core.ble.model.DeviceState
@@ -54,7 +56,13 @@ fun ConnectionScreen(
     // SSIDs aus Firmware-Events
     var ssids by remember { mutableStateOf(listOf<String>()) }
     var isScanning by remember { mutableStateOf(false) }
-    var scanSessionId by remember { mutableStateOf(0) } // nur für Recompose-Key analog iOS
+    var scanSessionId by remember { mutableStateOf(0) }
+
+    // String resources
+    val strConnected = stringResource(R.string.connected)
+    val strDisconnected = stringResource(R.string.disconnected)
+    val strError = stringResource(R.string.error_exclaim)
+    val strSelectFormat = stringResource(R.string.select_format)
 
     // Firmware-Messages konsumieren (SSID_LIST, WIFI_CONN_RESULT)
     LaunchedEffect(Unit) {
@@ -108,11 +116,11 @@ fun ConnectionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Verbindung") },
+                title = { Text(stringResource(R.string.title_connection)) },
                 navigationIcon = {
                     if (onBack != null) {
                         IconButton(onClick = onBack) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = "Zurück")
+                            Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                         }
                     }
                 },
@@ -124,7 +132,7 @@ fun ConnectionScreen(
                             vm.wifiScan()
                         }
                     ) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Netzwerk-Scan")
+                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.network_scan))
                     }
                 }
             )
@@ -146,8 +154,8 @@ fun ConnectionScreen(
                 Capsule(
                     modifier = Modifier.weight(1f),
                     icon = { Icon(Icons.Filled.Bluetooth, contentDescription = null, tint = if (isBleConnected) Color.Cyan else LocalContentColor.current) },
-                    title = "Bluetooth",
-                    subtitle = if (isBleConnected) "Verbunden" else "Getrennt"
+                    title = stringResource(R.string.bluetooth),
+                    subtitle = if (isBleConnected) strConnected else strDisconnected
                 )
                 val wifiScale by animateFloatAsState(
                     targetValue = when {
@@ -168,19 +176,19 @@ fun ConnectionScreen(
                         }
                         Icon(Icons.Filled.Wifi, contentDescription = null, tint = tint)
                     },
-                    title = "WLAN",
+                    title = stringResource(R.string.wifi),
                     subtitle = when {
-                        showWifiError -> "Fehler!"
-                        isBleConnected && isWifiConnected -> "Verbunden"
-                        else -> "Getrennt"
+                        showWifiError -> strError
+                        isBleConnected && isWifiConnected -> strConnected
+                        else -> strDisconnected
                     }
                 )
             }
 
             // ----------------------------------- WLAN -----------------------------------
-            SettingsGroupHeader("WLAN")
+            SettingsGroupHeader(stringResource(R.string.wifi))
             Text(
-                "Für die WLAN-Verbindung hier nach verfügbaren Netzwerken suchen und das Passwort eingeben. Funktioniert nur mit 2,4 GHz Netzwerken.",
+                stringResource(R.string.wifi_help),
                 style = MaterialTheme.typography.bodySmall, color = Color.Gray,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -200,14 +208,14 @@ fun ConnectionScreen(
                             .heightIn(min = 48.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Netzwerk", Modifier.weight(1f))
+                        Text(stringResource(R.string.network), Modifier.weight(1f))
                         if (isScanning) {
                             CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                         } else {
                             var expanded by remember(scanSessionId) { mutableStateOf(false) }
                             val items = ssids
                             Text(
-                                if (wifiSsid.isBlank()) "Auswählen (${items.size})" else wifiSsid,
+                                if (wifiSsid.isBlank()) strSelectFormat.format(items.size) else wifiSsid,
                                 color = Color.Gray,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(8.dp))
@@ -216,7 +224,7 @@ fun ConnectionScreen(
                             )
                             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                                 DropdownMenuItem(
-                                    text = { Text("Auswählen (${items.size})") },
+                                    text = { Text(strSelectFormat.format(items.size)) },
                                     onClick = {
                                         wifiSsid = ""
                                         expanded = false
@@ -240,7 +248,7 @@ fun ConnectionScreen(
                         value = wifiPassword,
                         onValueChange = { wifiPassword = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Passwort") },
+                        label = { Text(stringResource(R.string.password)) },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation()
                     )
@@ -260,9 +268,9 @@ fun ConnectionScreen(
                             if (isConnecting) {
                                 CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                                 Spacer(Modifier.width(10.dp))
-                                Text("Verbinden…")
+                                Text(stringResource(R.string.connecting))
                             } else {
-                                Text("Zugangsdaten senden")
+                                Text(stringResource(R.string.send_credentials))
                             }
                         }
                     }
@@ -272,9 +280,9 @@ fun ConnectionScreen(
             Spacer(Modifier.height(14.dp))
 
             // -------------------------------- Bluetooth ---------------------------------
-            SettingsGroupHeader("Bluetooth")
+            SettingsGroupHeader(stringResource(R.string.bluetooth))
             Text(
-                "Bei Verbindungsproblemen das gespeicherte Gerät entfernen und die Verbindung neu aufbauen.",
+                stringResource(R.string.bluetooth_help),
                 style = MaterialTheme.typography.bodySmall, color = Color.Gray,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -290,14 +298,14 @@ fun ConnectionScreen(
                     Button(
                         onClick = { vm.startScan() },
                         enabled = connection !is BleManager.ConnectionState.Ready
-                    ) { Text("Verbindung herstellen") }
+                    ) { Text(stringResource(R.string.establish_connection)) }
 
                     Spacer(Modifier.height(8.dp))
 
                     TextButton(
                         onClick = { vm.disconnect() },
                         colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFD32F2F))
-                    ) { Text("Gespeichertes Gerät entfernen") }
+                    ) { Text(stringResource(R.string.remove_saved_device)) }
                 }
             }
 

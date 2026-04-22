@@ -1,0 +1,114 @@
+<resources>
+    <string name="app_name">LTS Control</string>
+
+    <!-- Navigation / Tabs -->
+    <string name="tab_control">控制</string>
+    <string name="tab_settings">设置</string>
+    <string name="tab_connection">连接</string>
+    <string name="tab_more">更多</string>
+
+    <!-- Titles -->
+    <string name="title_home">LTS Respooler</string>
+    <string name="title_settings">设置</string>
+    <string name="title_connection">连接</string>
+    <string name="title_more">更多</string>
+
+    <!-- Common -->
+    <string name="back">返回</string>
+    <string name="connected">已连接</string>
+    <string name="disconnected">未连接</string>
+    <string name="connection">连接</string>
+    <string name="bluetooth">蓝牙</string>
+    <string name="wifi">WLAN</string>
+    <string name="temperature">温度</string>
+    <string name="filament">耗材</string>
+    <string name="fan">风扇</string>
+    <string name="error">错误</string>
+    <string name="error_exclaim">错误！</string>
+    <string name="status">状态</string>
+    <string name="start">启动</string>
+    <string name="pause">暂停</string>
+    <string name="stop">停止</string>
+    <string name="detected">已检测</string>
+    <string name="not_detected">未检测</string>
+
+    <!-- Device States -->
+    <string name="state_idle">空闲</string>
+    <string name="state_running">运行中...</string>
+    <string name="state_paused">已暂停</string>
+    <string name="state_auto_stop">自动停止</string>
+    <string name="state_updating">更新中...</string>
+    <string name="state_done">完成</string>
+    <string name="state_error">错误</string>
+    <string name="state_ready">就绪</string>
+    <string name="state_running_short">运行中</string>
+
+    <!-- Connection Screen -->
+    <string name="network_scan">网络扫描</string>
+    <string name="wifi_help">搜索可用的无线网络并输入密码以连接 WLAN。仅支持 2.4 GHz 网络。</string>
+    <string name="network">网络</string>
+    <string name="select_format">选择 (%d)</string>
+    <string name="password">密码</string>
+    <string name="connecting">连接中…</string>
+    <string name="send_credentials">发送凭据</string>
+    <string name="bluetooth_help">如遇连接问题，请删除已保存的设备并重新建立连接。</string>
+    <string name="establish_connection">建立连接</string>
+    <string name="remove_saved_device">删除已保存的设备</string>
+
+    <!-- Settings: Configuration -->
+    <string name="configuration">配置</string>
+    <string name="sound_on_completion">完成提示音</string>
+    <string name="jingle_off">关闭</string>
+    <string name="jingle_simple">简单</string>
+    <string name="jingle_glissando">滑音</string>
+    <string name="jingle_star_wars">星球大战</string>
+    <string name="led_brightness">LED 亮度</string>
+    <string name="respool_amount">绕线量</string>
+    <string name="use_filament_sensor">使用耗材传感器</string>
+    <string name="filament_sensor_help">禁用传感器后，耗材断裂时将不会做出反应。</string>
+
+    <!-- Settings: Motor -->
+    <string name="motor">电机</string>
+    <string name="reverse_direction">反转方向</string>
+    <string name="strength">强度</string>
+    <string name="auto_stop_sensitivity">自动停止灵敏度</string>
+    <string name="sensitivity_low">低</string>
+    <string name="sensitivity_medium">中</string>
+    <string name="sensitivity_high">高</string>
+    <string name="sensitivity_off">关闭</string>
+    <string name="auto_stop_help">自动停止功能在检测到阻力时停止电机。</string>
+
+    <!-- Settings: High-Speed -->
+    <string name="high_speed">高速模式</string>
+    <string name="high_speed_help">高速模式提高电机速度。使用高速模式时自动停止功能不可用。</string>
+
+    <!-- Settings: Fan -->
+    <string name="speed">速度</string>
+    <string name="fan_always_on">风扇常开</string>
+    <string name="temperature_unit">温度单位</string>
+    <string name="celsius">摄氏度</string>
+    <string name="fahrenheit">华氏度</string>
+    <string name="fan_help">风扇默认在绕线器停止 10 秒后自动关闭。</string>
+
+    <!-- Settings: Calibration -->
+    <string name="calibration">校准</string>
+    <string name="duration">时长</string>
+    <string name="duration_format">时长: %1$dm %2$02ds</string>
+    <string name="calibration_help">为获得更准确的时间和绕线量，请测量 1 kg 耗材在 80% 速度下所需的时间并在此调整。</string>
+
+    <!-- Settings: App -->
+    <string name="app_section">应用</string>
+    <string name="notifications">通知</string>
+    <string name="notifications_help">当绕线器停止或完成时接收推送通知。</string>
+
+    <!-- Respool Amount -->
+    <string name="entire_spool">整卷</string>
+    <string name="entire_spool_help">绕线器通过耗材传感器在上卷耗尽时自动停止。推荐在两个 1 kg 耗材卷之间转移时使用。</string>
+    <string name="weight_1kg">1.0 kg</string>
+    <string name="weight_05kg">0.5 kg</string>
+    <string name="weight_025kg">0.25 kg</string>
+    <string name="fixed_weight_help">绕线器根据已转移的耗材量自动停止。推荐在上卷大于 1 kg 时使用。\n\n停止基于动态计算的进度，准确性可能因材料不同而有所差异。</string>
+
+    <!-- More placeholder -->
+    <string name="more_placeholder">更多（关于）— 即将推出</string>
+</resources>
